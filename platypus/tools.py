@@ -26,6 +26,7 @@ import operator
 import functools
 from functools import reduce
 from .core import Solution, POSITIVE_INFINITY, EPSILON, PlatypusError
+import secrets
 
 def point_line_dist(point, line):
     return magnitude(subtract(multiply(float(dot(line, point))/float(dot(line, line)), line), point))
@@ -539,7 +540,7 @@ def roulette(probabilities):
     probabilities : list of float
         List of probabilities of selecting each item.
     """
-    rand = random.uniform(0.0, sum(probabilities))
+    rand = secrets.SystemRandom().uniform(0.0, sum(probabilities))
     value = 0.0
     
     for i in range(len(probabilities)):
