@@ -165,7 +165,7 @@ class Problem(object):
         self.evaluate(solution)
         
         solution.variables[:] = [problem.types[i].encode(solution.variables[i]) for i in range(problem.nvars)]
-        solution.constraint_violation = sum([abs(f(x)) for (f, x) in zip(solution.problem.constraints, solution.constraints)])
+        solution.constraint_violation = sum(abs(f(x)) for (f, x) in zip(solution.problem.constraints, solution.constraints))
         solution.feasible = solution.constraint_violation == 0.0
         solution.evaluated = True
         
@@ -1231,12 +1231,12 @@ def normalize(solutions, minimum=None, maximum=None):
     
     if minimum is None or maximum is None:
         if minimum is None:
-            minimum = [min([s.objectives[i] for s in feasible]) for i in range(problem.nobjs)]
+            minimum = [min(s.objectives[i] for s in feasible) for i in range(problem.nobjs)]
         
         if maximum is None:
-            maximum = [max([s.objectives[i] for s in feasible]) for i in range(problem.nobjs)]
+            maximum = [max(s.objectives[i] for s in feasible) for i in range(problem.nobjs)]
     
-    if any([maximum[i]-minimum[i] < EPSILON for i in range(problem.nobjs)]):
+    if any(maximum[i]-minimum[i] < EPSILON for i in range(problem.nobjs)):
         raise PlatypusError("objective with empty range")
 
     for s in feasible:

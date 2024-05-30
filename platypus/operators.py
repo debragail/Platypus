@@ -376,7 +376,7 @@ class PCX(Variator):
         for i in range(k):
             x.append(parents[i].variables[:])
             
-        g = [sum([x[i][j] for i in range(k)]) / k for j in range(n)]
+        g = [sum(x[i][j] for i in range(k)) / k for j in range(n)]
         D = 0.0
         
         # basis vectors defined by parents
@@ -438,7 +438,7 @@ class UNDX(Variator):
         for i in range(k):
             x.append(parents[i].variables[:])
             
-        g = [sum([x[i][j] for i in range(k)]) / k for j in range(n)]
+        g = [sum(x[i][j] for i in range(k)) / k for j in range(n)]
         
         
         # basis vectors defined by parents
@@ -506,7 +506,7 @@ class SPX(Variator):
             x.append(parents[i].variables[:])
         
         # compute center of mass
-        G = [sum([x[i][j] for i in range(n)]) / n for j in range(m)]
+        G = [sum(x[i][j] for i in range(n)) / n for j in range(m)]
         
         # compute expanded simplex vertices
         for i in range(n):
@@ -556,7 +556,7 @@ class BitFlip(Mutation):
         probability = self.probability
         
         if isinstance(probability, int):
-            probability /= sum([t.nbits for t in problem.types if isinstance(t, Binary)])
+            probability /= sum(t.nbits for t in problem.types if isinstance(t, Binary))
         
         for i in range(problem.nvars):
             type = problem.types[i]

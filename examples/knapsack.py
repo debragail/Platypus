@@ -8,8 +8,8 @@ profits = [6, 5, 8, 9, 6, 7, 3]
     
 def knapsack(x):
     selection = x[0]
-    total_weight = sum([weights[i] if selection[i] else 0 for i in range(items)])
-    total_profit = sum([profits[i] if selection[i] else 0 for i in range(items)])
+    total_weight = sum(weights[i] if selection[i] else 0 for i in range(items))
+    total_profit = sum(profits[i] if selection[i] else 0 for i in range(items))
     
     return total_profit, total_weight
 

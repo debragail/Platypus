@@ -38,7 +38,7 @@ def distance_to_nearest(solution, set):
     if len(set) == 0:
         return POSITIVE_INFINITY
     
-    return min([normalized_euclidean_dist(solution, s) for s in set])
+    return min(normalized_euclidean_dist(solution, s) for s in set)
 
 class GenerationalDistance(Indicator):
     
@@ -84,7 +84,7 @@ class EpsilonIndicator(Indicator):
             return POSITIVE_INFINITY
         
         normalize(feasible, self.minimum, self.maximum)
-        return max([min([max([s2.normalized_objectives[k] - s1.normalized_objectives[k] for k in range(s2.problem.nobjs)]) for s2 in set]) for s1 in self.reference_set])
+        return max(min([max([s2.normalized_objectives[k] - s1.normalized_objectives[k] for k in range(s2.problem.nobjs)]) for s2 in set]) for s1 in self.reference_set)
     
 class Spacing(Indicator):
     
@@ -162,7 +162,7 @@ class Hypervolume(Indicator):
         return n
     
     def surface_unchanged_to(self, solutions, nsols, obj):
-        return min([solutions[i].normalized_objectives[obj] for i in range(nsols)])
+        return min(solutions[i].normalized_objectives[obj] for i in range(nsols))
     
     def reduce_set(self, solutions, nsols, obj, threshold):
         i = 0
@@ -199,7 +199,7 @@ class Hypervolume(Indicator):
     def calculate(self, set):
         feasible = [s for s in set if s.constraint_violation==0.0]
         normalize(feasible, self.minimum, self.maximum)
-        feasible = [s for s in feasible if all([o <= 1.0 for o in s.normalized_objectives])]
+        feasible = [s for s in feasible if all(o <= 1.0 for o in s.normalized_objectives)]
             
         if len(feasible) == 0:
             return 0.0

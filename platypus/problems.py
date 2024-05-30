@@ -38,7 +38,7 @@ class DTLZ1(Problem):
         
     def evaluate(self, solution):
         k = self.nvars - self.nobjs + 1
-        g = 100.0 * (k + sum([math.pow(x - 0.5, 2.0) - math.cos(20.0 * math.pi * (x - 0.5)) for x in solution.variables[self.nvars-k:]]))
+        g = 100.0 * (k + sum(math.pow(x - 0.5, 2.0) - math.cos(20.0 * math.pi * (x - 0.5)) for x in solution.variables[self.nvars-k:]))
         f = [0.5 * (1.0 + g)]*self.nobjs
         
         for i in range(self.nobjs):
@@ -66,7 +66,7 @@ class DTLZ2(Problem):
         
     def evaluate(self, solution):
         k = self.nvars - self.nobjs + 1
-        g = sum([math.pow(x - 0.5, 2.0) for x in solution.variables[self.nvars-k:]])
+        g = sum(math.pow(x - 0.5, 2.0) for x in solution.variables[self.nvars-k:])
         f = [1.0+g]*self.nobjs
 
         for i in range(self.nobjs):
@@ -94,7 +94,7 @@ class DTLZ3(Problem):
         
     def evaluate(self, solution):
         k = self.nvars - self.nobjs + 1
-        g = 100.0 * (k + sum([math.pow(x - 0.5, 2.0) - math.cos(20.0 * math.pi * (x - 0.5)) for x in solution.variables[self.nvars-k:]]))
+        g = 100.0 * (k + sum(math.pow(x - 0.5, 2.0) - math.cos(20.0 * math.pi * (x - 0.5)) for x in solution.variables[self.nvars-k:]))
         f = [1.0+g]*self.nobjs
         
         for i in range(self.nobjs):
@@ -123,7 +123,7 @@ class DTLZ4(Problem):
         
     def evaluate(self, solution):
         k = self.nvars - self.nobjs + 1
-        g = sum([math.pow(x - 0.5, 2.0) for x in solution.variables[self.nvars-k:]])
+        g = sum(math.pow(x - 0.5, 2.0) for x in solution.variables[self.nvars-k:])
         f = [1.0+g]*self.nobjs
         
         for i in range(self.nobjs):
@@ -153,7 +153,7 @@ class DTLZ7(Problem):
     def evaluate(self, solution):
         k = self.nvars - self.nobjs + 1
         g = 1.0 + (9.0 * sum(solution.variables[self.nvars-k:])) / k
-        h = self.nobjs - sum([x / (1.0 + g) * (1.0 + math.sin(3.0 * math.pi * x)) for x in solution.variables[:self.nobjs-1]])
+        h = self.nobjs - sum(x / (1.0 + g) * (1.0 + math.sin(3.0 * math.pi * x)) for x in solution.variables[:self.nobjs-1])
         
         solution.objectives[:self.nobjs-1] = solution.variables[:self.nobjs-1]
         solution.objectives[-1] = (1.0 + g) * h
@@ -182,7 +182,7 @@ def _correct_to_01(a):
         return a
     
 def _vector_in_01(x):
-    return all([a >= 0.0 and a <= 1.0 for a in x])
+    return all(a >= 0.0 and a <= 1.0 for a in x)
 
 def _s_linear(y, A):
     return _correct_to_01(abs(y - A) / abs(math.floor(A - y) + A))
@@ -212,12 +212,12 @@ def _subvector(v, head, tail):
     return [v[i] for i in range(head, tail)]
 
 def _r_sum(y, w):
-    numerator = sum([w[i]*y[i] for i in range(len(y))])
-    denominator = sum([w[i] for i in range(len(y))])
+    numerator = sum(w[i]*y[i] for i in range(len(y)))
+    denominator = sum(w[i] for i in range(len(y)))
     return _correct_to_01(numerator / denominator)
 
 def _r_nonsep(y, A):
-    numerator = sum([y[j] + sum([abs(y[j] - y[(j + k + 1) % len(y)]) for k in range(A-1)]) for j in range(len(y))])
+    numerator = sum(y[j] + sum([abs(y[j] - y[(j + k + 1) % len(y)]) for k in range(A-1)]) for j in range(len(y)))
     tmp = math.ceil(A / 2.0)
     denominator = len(y) * tmp * (1.0 + 2.0*A - 2.0*tmp) / A
     return _correct_to_01(numerator / denominator)
@@ -638,7 +638,7 @@ def _transform(x, M, lam, nvars, nobjs):
     zz = [0.0]*nvars
     
     for i in range(nvars):
-        z = sum([M[i][j]*x[j] for j in range(nvars)])
+        z = sum(M[i][j]*x[j] for j in range(nvars))
         
         if z >= 0 and z <= 1:
             zz[i] = z
@@ -1648,7 +1648,7 @@ class ZDT4(ZDT):
         
     def evaluate(self, solution):
         x = solution.variables[:]
-        g = 1.0 + 10.0*(self.nvars-1) + sum([math.pow(x[i], 2.0) - 10.0*math.cos(4.0*math.pi*x[i]) for i in range(1, self.nvars)])
+        g = 1.0 + 10.0*(self.nvars-1) + sum(math.pow(x[i], 2.0) - 10.0*math.cos(4.0*math.pi*x[i]) for i in range(1, self.nvars))
         h = 1.0 - math.sqrt(x[0] / g)
         solution.objectives[:] = [x[0], g*h]
         
@@ -1661,7 +1661,7 @@ class ZDT5(ZDT):
         
     def evaluate(self, solution):
         f = 1.0 + sum(solution.variables[0])
-        g = sum([2+sum(v) if sum(v) < 5 else 1 for v in solution.variables[1:]])
+        g = sum(2+sum(v) if sum(v) < 5 else 1 for v in solution.variables[1:])
         h = 1.0 / f
         solution.objectives[:] = [f, g*h]
         

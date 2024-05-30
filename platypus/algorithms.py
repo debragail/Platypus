@@ -438,7 +438,7 @@ class MOEAD(AbstractGeneticAlgorithm):
         self.weight_generator_kwargs = only_keys_for(kwargs, weight_generator)
         
         # MOEA/D currently only works on minimization problems
-        if any([d != Problem.MINIMIZE for d in problem.directions]):
+        if any(d != Problem.MINIMIZE for d in problem.directions):
             raise PlatypusError("MOEAD currently only works with minimization problems")
         
         # If using the default weight generator, random_weights, use a default
@@ -626,7 +626,7 @@ class NSGAIII(AbstractGeneticAlgorithm):
         self.reference_points = normal_boundary_weights(problem.nobjs, divisions_outer, divisions_inner)
         
         # NSGAIII currently only works on minimization problems
-        if any([d != Problem.MINIMIZE for d in problem.directions]):
+        if any(d != Problem.MINIMIZE for d in problem.directions):
             raise PlatypusError("NSGAIII currently only works with minimization problems")
     
     def _find_extreme_points(self, solutions, objective):
@@ -640,7 +640,7 @@ class NSGAIII(AbstractGeneticAlgorithm):
         
         for i in range(len(solutions)):
             objectives = solutions[i].normalized_objectives
-            value = max([objectives[j]/weights[j] for j in range(nobjs)])
+            value = max(objectives[j]/weights[j] for j in range(nobjs))
             
             if value < min_value:
                 min_index = i
@@ -1113,7 +1113,7 @@ class CMAES(Algorithm):
         sum_of_weights = sum(self.weights)
         self.weights = [w / sum_of_weights for w in self.weights]
         
-        sumsq_of_weights = sum([w**2 for w in self.weights])
+        sumsq_of_weights = sum(w**2 for w in self.weights)
         self.mueff = 1.0 / sumsq_of_weights
         
         if self.cs is None:
@@ -1270,12 +1270,12 @@ class CMAES(Algorithm):
                 self.ps[i] = (1.0 - self.cs) * self.ps[i] + math.sqrt(self.cs * (2.0 - self.cs)) * BDz[i] / self.diag_D[i]
         else:
             for i in range(self.problem.nvars):
-                artmp[i] = sum([self.B[j][i]*BDz[j] for j in range(self.problem.nvars)]) / self.diag_D[i]
+                artmp[i] = sum(self.B[j][i]*BDz[j] for j in range(self.problem.nvars)) / self.diag_D[i]
             
             for i in range(self.problem.nvars):
-                self.ps[i] = (1.0 - self.cs) * self.ps[i] + math.sqrt(self.cs * (2.0 - self.cs)) * sum([self.B[i][j] * artmp[j] for j in range(self.problem.nvars)])
+                self.ps[i] = (1.0 - self.cs) * self.ps[i] + math.sqrt(self.cs * (2.0 - self.cs)) * sum(self.B[i][j] * artmp[j] for j in range(self.problem.nvars))
               
-        psxps = sum([self.ps[i]**2 for i in range(self.problem.nvars)])
+        psxps = sum(self.ps[i]**2 for i in range(self.problem.nvars))
         hsig = 0.0
         
         if math.sqrt(psxps) / math.sqrt(1.0 - math.pow(1.0 - self.cs, 2.0 * self.iteration)) / self.chi_N < 1.4 + 2.0 / (self.problem.nvars+1):
