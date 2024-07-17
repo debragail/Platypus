@@ -21,7 +21,6 @@ from __future__ import absolute_import, division, print_function
 import sys
 import copy
 import math
-import random
 import operator
 import itertools
 import functools
@@ -40,6 +39,7 @@ from .tools import DistanceMatrix, choose, point_line_dist, lsolve,\
     tred2, tql2, check_eigensystem, remove_keys, only_keys_for
 from .weights import random_weights, chebyshev, normal_boundary_weights
 from .config import default_variator, default_mutator
+import secrets
 
 try:
     set
@@ -246,9 +246,9 @@ class EpsMOEA(AbstractGeneticAlgorithm):
         if len(self.archive) <= 1:
             parents = self.selector.select(self.variator.arity, self.population)
         else:
-            parents = self.selector.select(self.variator.arity-1, self.population) + [random.choice(self.archive)]
+            parents = self.selector.select(self.variator.arity-1, self.population) + [secrets.choice(self.archive)]
 
-        random.shuffle(parents)
+        secrets.SystemRandom().shuffle(parents)
         
         children = self.variator.evolve(parents)
         self.evaluate_all(children)
@@ -270,10 +270,10 @@ class EpsMOEA(AbstractGeneticAlgorithm):
                 dominated = True
                 
         if len(dominates) > 0:
-            del self.population[random.choice(dominates)]
+            del self.population[secrets.choice(dominates)]
             self.population.append(solution)
         elif not dominated:
-            self.population.remove(random.choice(self.population))
+            self.population.remove(secrets.choice(self.population))
             self.population.append(solution)
 
 class GDE3(AbstractGeneticAlgorithm):
@@ -290,7 +290,7 @@ class GDE3(AbstractGeneticAlgorithm):
     def select(self, i, arity):
         indices = []
         indices.append(i)
-        indices.extend(random.sample(list(range(0, i)) + list(range(i+1, len(self.population))),
+        indices.extend(secrets.SystemRandom().sample(list(range(0, i)) + list(range(i+1, len(self.population))),
                                      arity-1))
         return operator.itemgetter(*indices)(self.population)
     
@@ -455,7 +455,7 @@ class MOEAD(AbstractGeneticAlgorithm):
     
     def _update_solution(self, solution, mating_indices):
         c = 0
-        random.shuffle(mating_indices)
+        secrets.SystemRandom().shuffle(mating_indices)
         
         for i in mating_indices:
             candidate = self.population[i]
@@ -550,17 +550,17 @@ class MOEAD(AbstractGeneticAlgorithm):
                 indices.extend(list(range(self.problem.nobjs)))
             
             while len(indices) < self.population_size:
-                index = random.randrange(self.population_size)
+                index = secrets.SystemRandom().randrange(self.population_size)
                 
                 for _ in range(9):
-                    temp_index = random.randrange(self.population_size)
+                    temp_index = secrets.SystemRandom().randrange(self.population_size)
                     
                     if self.utilities[temp_index] > self.utilities[index]:
                         index = temp_index
             
                 indices.append(index)
             
-        random.shuffle(indices)
+        secrets.SystemRandom().shuffle(indices)
         return indices
     
     def _get_mating_indices(self, index):
@@ -570,7 +570,7 @@ class MOEAD(AbstractGeneticAlgorithm):
         probability :code:`delta`, the neighborhood is returned.  Otherwise,
         the entire population is returned.
         """
-        if random.uniform(0.0, 1.0) <= self.delta:
+        if secrets.SystemRandom().uniform(0.0, 1.0) <= self.delta:
             return self.neighborhoods[index]
         else:
             return list(range(self.population_size))
@@ -743,7 +743,7 @@ class NSGAIII(AbstractGeneticAlgorithm):
                         min_indices.append(i)
                 
                 # pick one randomly if there are multiple options
-                min_index = random.choice(min_indices)
+                min_index = secrets.choice(min_indices)
                 
                 # add associated solution
                 if min_count == 0:
@@ -758,7 +758,7 @@ class NSGAIII(AbstractGeneticAlgorithm):
                     if len(potential_members[min_index]) == 0:
                         excluded.add(min_index)
                     else:
-                        rand_solution = random.choice(potential_members[min_index])
+                        rand_solution = secrets.choice(potential_members[min_index])
                         result.append(rand_solution)
                         members[min_index].append(rand_solution)
                         potential_members[min_index].remove(rand_solution)
@@ -850,11 +850,11 @@ class ParticleSwarm(Algorithm):
             local_best = self.local_best[i].variables
             leader = self._select_leader().variables
             
-            r1 = random.uniform(0.0, 1.0)
-            r2 = random.uniform(0.0, 1.0)
-            C1 = random.uniform(1.5, 2.0)
-            C2 = random.uniform(1.5, 2.0)
-            W = random.uniform(0.1, 0.5)
+            r1 = secrets.SystemRandom().uniform(0.0, 1.0)
+            r2 = secrets.SystemRandom().uniform(0.0, 1.0)
+            C1 = secrets.SystemRandom().uniform(1.5, 2.0)
+            C2 = secrets.SystemRandom().uniform(1.5, 2.0)
+            W = secrets.SystemRandom().uniform(0.1, 0.5)
             
             for j in range(self.problem.nvars):
                 self.velocities[i][j] = W * self.velocities[i][j] + \
@@ -862,15 +862,15 @@ class ParticleSwarm(Algorithm):
                         C2*r2*(leader[j] - particle[j])
     
     def _select_leader(self):
-        leader1 = random.choice(self.leaders)
-        leader2 = random.choice(self.leaders)
+        leader1 = secrets.choice(self.leaders)
+        leader2 = secrets.choice(self.leaders)
         flag = self.leader_comparator.compare(leader1, leader2)
         
         if flag < 0:
             return leader1
         elif flag > 0:
             return leader2
-        elif bool(random.getrandbits(1)):
+        elif bool(secrets.SystemRandom().getrandbits(1)):
             return leader1
         else:
             return leader2
@@ -996,11 +996,11 @@ class SMPSO(ParticleSwarm):
             local_best = self.local_best[i].variables
             leader = self._select_leader().variables
             
-            r1 = random.uniform(0.0, 1.0)
-            r2 = random.uniform(0.0, 1.0)
-            C1 = random.uniform(1.5, 2.5)
-            C2 = random.uniform(1.5, 2.5)
-            W = random.uniform(0.1, 0.1)
+            r1 = secrets.SystemRandom().uniform(0.0, 1.0)
+            r2 = secrets.SystemRandom().uniform(0.0, 1.0)
+            C1 = secrets.SystemRandom().uniform(1.5, 2.5)
+            C2 = secrets.SystemRandom().uniform(1.5, 2.5)
+            W = secrets.SystemRandom().uniform(0.1, 0.1)
             
             for j in range(self.problem.nvars):
                 self.velocities[i][j] = self._constriction(C1, C2) * \
@@ -1101,10 +1101,10 @@ class CMAES(Algorithm):
                     offset = 0.4 * (type.max_value - type.min_value)
                     rangev = 0.2 * (type.max_value - type.min_value)
                     
-                self.xmean[i] = type.min_value + offset + random.uniform(0.0, 1.0) * rangev
+                self.xmean[i] = type.min_value + offset + secrets.SystemRandom().uniform(0.0, 1.0) * rangev
         else:
             for i in range(self.problem.nvars):
-                self.xmean[i] = self.initial_search_point[i] + self.sigma*self.diag_D[i]*random.gauss()  
+                self.xmean[i] = self.initial_search_point[i] + self.sigma*self.diag_D[i]*secrets.SystemRandom().gauss()  
             
         self.chi_N = math.sqrt(self.problem.nvars) * (1.0 - 1.0/(4.0*self.problem.nvars) + 1.0/(21.0*self.problem.nvars**2))
         self.mu = int(math.floor(self.offspring_size / 2.0))
@@ -1203,7 +1203,7 @@ class CMAES(Algorithm):
                     
                     for j in range(self.problem.nvars):
                         type = self.problem.types[j]
-                        value = self.xmean[j] + self.sigma * self.diag_D[j] * random.gauss(0.0, 1.0)
+                        value = self.xmean[j] + self.sigma * self.diag_D[j] * secrets.SystemRandom().gauss(0.0, 1.0)
                         if value < type.min_value or value > type.max_value:
                             feasible = False
                             break
@@ -1219,7 +1219,7 @@ class CMAES(Algorithm):
                     feasible = True
                     
                     for j in range(self.problem.nvars):
-                        artmp[j] = self.diag_D[j] * random.gauss(0.0, 1.0)
+                        artmp[j] = self.diag_D[j] * secrets.SystemRandom().gauss(0.0, 1.0)
                         
                     for j in range(self.problem.nvars):
                         type = self.problem.types[j]
@@ -1417,7 +1417,7 @@ class RegionBasedSelector(Selector):
         self.grid = grid
         
     def draw(self):
-        index = random.randrange(len(self.grid.keys()))
+        index = secrets.SystemRandom().randrange(len(self.grid.keys()))
         key = list(self.grid.keys())[index]
         return (key, self.grid[key])
         
@@ -1428,10 +1428,10 @@ class RegionBasedSelector(Selector):
         
         if entry1[0] != entry2[0]:
             if (self.archive.density[entry2[0]] < self.archive.density[entry1[0]] or
-                (self.archive.density[entry2[0]] == self.archive.density[entry1[0]] and random.getrandbits(1))):
+                (self.archive.density[entry2[0]] == self.archive.density[entry1[0]] and secrets.SystemRandom().getrandbits(1))):
                 selection = entry2
                 
-        return selection[1][random.randrange(len(selection[1]))]
+        return selection[1][secrets.SystemRandom().randrange(len(selection[1]))]
         
 class PESA2(AbstractGeneticAlgorithm):
     
@@ -1593,7 +1593,7 @@ class AdaptiveTimeContinuation(PeriodicAction):
         offspring = []
             
         while len(population) + len(offspring) < new_size:
-            parents = [archive[random.randrange(len(archive))] for _ in range(self.mutator.arity)]
+            parents = [archive[secrets.SystemRandom().randrange(len(archive))] for _ in range(self.mutator.arity)]
             offspring.extend(self.mutator.evolve(parents))
             
         self.algorithm.evaluate_all(offspring)

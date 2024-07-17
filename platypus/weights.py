@@ -21,8 +21,8 @@ from __future__ import absolute_import, division, print_function
 import sys
 import math
 import copy
-import random
 from .core import POSITIVE_INFINITY
+import secrets
 
 # Scalarizing functions used to compute the fitness of a solution with multiple
 # objectives.
@@ -112,7 +112,7 @@ def random_weights(nobjs, population_size):
         candidate_weights = []
         
         for i in range(population_size*50):
-            random_values = [random.uniform(0.0, 1.0) for _ in range(nobjs)]
+            random_values = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(nobjs)]
             candidate_weights.append([x/sum(random_values) for x in random_values])
         
         # add weights for the corners
