@@ -19,12 +19,12 @@
 from __future__ import absolute_import, division, print_function
 
 import math
-import random
 import operator
 import functools
 from .core import Problem, Solution, EPSILON
 from .types import Real, Binary
 from abc import ABCMeta
+import secrets
 
 ################################################################################
 # DTLZ Problems
@@ -53,7 +53,7 @@ class DTLZ1(Problem):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.nobjs-1] = [random.uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
+        solution.variables[:self.nobjs-1] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
         solution.variables[self.nobjs-1:] = 0.5
         solution.evaluate()
         return solution
@@ -81,7 +81,7 @@ class DTLZ2(Problem):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.nobjs-1] = [random.uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
+        solution.variables[:self.nobjs-1] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
         solution.variables[self.nobjs-1:] = 0.5
         solution.evaluate()
         return solution
@@ -109,7 +109,7 @@ class DTLZ3(Problem):
     
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.nobjs-1] = [random.uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
+        solution.variables[:self.nobjs-1] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
         solution.variables[self.nobjs-1:] = 0.5
         solution.evaluate()
         return solution
@@ -138,7 +138,7 @@ class DTLZ4(Problem):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.nobjs-1] = [random.uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
+        solution.variables[:self.nobjs-1] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
         solution.variables[self.nobjs-1:] = 0.5
         solution.evaluate()
         return solution
@@ -160,7 +160,7 @@ class DTLZ7(Problem):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.nobjs-1] = [random.uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
+        solution.variables[:self.nobjs-1] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.nobjs-1)]
         solution.variables[self.nobjs-1:] = 0.0
         solution.evaluate()
         return solution
@@ -439,7 +439,7 @@ class WFG1(WFG):
        
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [math.pow(random.uniform(0.0, 1.0), 50.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [math.pow(secrets.SystemRandom().uniform(0.0, 1.0), 50.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -460,7 +460,7 @@ class WFG2(WFG):
   
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [random.uniform(0.0, 1.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -481,7 +481,7 @@ class WFG3(WFG):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [random.uniform(0.0, 1.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -501,7 +501,7 @@ class WFG4(WFG):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [random.uniform(0.0, 1.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -521,7 +521,7 @@ class WFG5(WFG):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [random.uniform(0.0, 1.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -541,7 +541,7 @@ class WFG6(WFG):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [random.uniform(0.0, 1.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -562,7 +562,7 @@ class WFG7(WFG):
         
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [random.uniform(0.0, 1.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)
@@ -582,7 +582,7 @@ class WFG8(WFG):
         solution.objectives[:] = y
         
     def random(self):
-        result = [random.uniform(0.0, 1.0) for _ in range(self.k)] + [0.0]*self.l
+        result = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)] + [0.0]*self.l
 
         for i in range(self.k, self.nvars):
             w = [1.0]*(self.nvars)
@@ -612,7 +612,7 @@ class WFG9(WFG):
         solution.objectives[:] = y
         
     def random(self):
-        result = [random.uniform(0.0, 1.0) for _ in range(self.k)] + [0.0]*(self.l-1) + [0.35]
+        result = [secrets.SystemRandom().uniform(0.0, 1.0) for _ in range(self.k)] + [0.0]*(self.l-1) + [0.35]
 
         for i in range(self.nvars-2, self.k-1, -1):
             result_sub = result[i+1:self.nvars]
@@ -1247,7 +1247,7 @@ class UF13(WFG):
        
     def random(self):
         solution = Solution(self)
-        solution.variables[:self.k] = [math.pow(random.uniform(0.0, 1.0), 50.0) for _ in range(self.k)]
+        solution.variables[:self.k] = [math.pow(secrets.SystemRandom().uniform(0.0, 1.0), 50.0) for _ in range(self.k)]
         solution.variables[self.k:] = 0.35
         solution.variables[:] = [solution.variables[i] * 2.0 * (i+1) for i in range(self.nvars)]
         self.evaluate(solution)

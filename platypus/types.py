@@ -20,9 +20,9 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import math
-import random
 from abc import ABCMeta, abstractmethod
 from .tools import bin2gray, bin2int, int2bin, gray2bin
+import secrets
 
 class Type(object):
     """The type of a decision variable.
@@ -76,7 +76,7 @@ class Real(Type):
         self.max_value = float(max_value)
         
     def rand(self):
-        return random.uniform(self.min_value, self.max_value)
+        return secrets.SystemRandom().uniform(self.min_value, self.max_value)
         
     def __str__(self):
         return "Real(%f, %f)" % (self.min_value, self.max_value)
@@ -103,7 +103,7 @@ class Binary(Type):
         self.nbits = nbits
         
     def rand(self):
-        return [random.choice([False, True]) for _ in range(self.nbits)]
+        return [secrets.choice([False, True]) for _ in range(self.nbits)]
         
     def __str__(self):
         return "Binary(%d)" % self.nbits
@@ -138,7 +138,7 @@ class Integer(Binary):
         self.max_value = int(max_value)
         
     def rand(self):
-        return self.encode(random.randint(self.min_value, self.max_value))
+        return self.encode(secrets.SystemRandom().randint(self.min_value, self.max_value))
         
     def encode(self, value):
         return bin2gray(int2bin(value-self.min_value, self.nbits))
@@ -182,7 +182,7 @@ class Permutation(Type):
         
     def rand(self):
         elements = copy.deepcopy(self.elements)
-        random.shuffle(elements)
+        secrets.SystemRandom().shuffle(elements)
         return elements
         
     def __str__(self):
@@ -215,7 +215,7 @@ class Subset(Type):
         
     def rand(self):
         indices = list(range(len(self.elements)))
-        random.shuffle(indices)
+        secrets.SystemRandom().shuffle(indices)
         return [self.elements[i] for i in indices[:self.size]]
     
     def __str__(self):

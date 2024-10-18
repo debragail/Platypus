@@ -20,10 +20,10 @@ from __future__ import absolute_import, division, print_function
 
 import copy
 import math
-import random
 from .core import PlatypusError, Solution, ParetoDominance, Generator, Selector, Variator, Mutation, EPSILON
 from .types import Real, Binary, Permutation, Subset
 from .tools import add, subtract, multiply, is_zero, magnitude, orthogonalize, normalize, random_vector, zeros, roulette
+import secrets
 
 def clip(value, min_value, max_value):
     return max(min_value, min(value, max_value))
@@ -65,10 +65,10 @@ class TournamentSelector(Selector):
         self.dominance = dominance
     
     def select_one(self, population):
-        winner = random.choice(population)
+        winner = secrets.choice(population)
         
         for _ in range(self.tournament_size-1):
-            candidate = random.choice(population)
+            candidate = secrets.choice(population)
             flag = self.dominance.compare(winner, candidate)
             
             if flag > 0:
@@ -93,7 +93,7 @@ class PM(Mutation):
             
         for i in range(len(child.variables)):
             if isinstance(problem.types[i], Real):
-                if random.uniform(0.0, 1.0) <= probability:
+                if secrets.SystemRandom().uniform(0.0, 1.0) <= probability:
                     child.variables[i] = self.pm_mutation(float(child.variables[i]),
                                                           problem.types[i].min_value,
                                                           problem.types[i].max_value)
@@ -103,7 +103,7 @@ class PM(Mutation):
         return child
     
     def pm_mutation(self, x, lb, ub):
-        u = random.uniform(0, 1)
+        u = secrets.SystemRandom().uniform(0, 1)
         dx = ub - lb
         
         if u < 0.5:
@@ -131,13 +131,13 @@ class SBX(Variator):
         child1 = copy.deepcopy(parents[0])
         child2 = copy.deepcopy(parents[1])
         
-        if random.uniform(0.0, 1.0) <= self.probability:
+        if secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
             problem = child1.problem
             nvars = problem.nvars
             
             for i in range(nvars):
                 if isinstance(problem.types[i], Real):
-                    if random.uniform(0.0, 1.0) <= 0.5:
+                    if secrets.SystemRandom().uniform(0.0, 1.0) <= 0.5:
                         x1 = float(child1.variables[i])
                         x2 = float(child2.variables[i])
                         lb = problem.types[i].min_value
@@ -165,7 +165,7 @@ class SBX(Variator):
 
             beta = 1.0 / (1.0 + (2.0 * (y1 - lb) / (y2 - y1)))
             alpha = 2.0 - pow(beta, self.distribution_index + 1.0)
-            rand = random.uniform(0.0, 1.0)
+            rand = secrets.SystemRandom().uniform(0.0, 1.0)
 
             if rand <= 1.0 / alpha:
                 alpha = alpha * rand
@@ -190,7 +190,7 @@ class SBX(Variator):
             x2 = 0.5 * ((y1 + y2) + betaq * (y2 - y1));
             
             # randomly swap the values
-            if bool(random.getrandbits(1)):
+            if bool(secrets.SystemRandom().getrandbits(1)):
                 x1, x2 = x2, x1
             
             x1 = clip(x1, lb, ub)
@@ -251,10 +251,10 @@ class DifferentialEvolution(Variator):
     def evolve(self, parents):
         result = copy.deepcopy(parents[0])
         problem = result.problem
-        jrand = random.randrange(problem.nvars)
+        jrand = secrets.SystemRandom().randrange(problem.nvars)
         
         for j in range(problem.nvars):
-            if random.uniform(0.0, 1.0) <= self.crossover_rate or j == jrand:
+            if secrets.SystemRandom().uniform(0.0, 1.0) <= self.crossover_rate or j == jrand:
                 v1 = float(parents[1].variables[j])
                 v2 = float(parents[2].variables[j])
                 v3 = float(parents[3].variables[j])
@@ -279,9 +279,9 @@ class UniformMutation(Mutation):
         problem = result.problem
         
         for i in range(problem.nvars):
-            if random.uniform(0.0, 1.0) <= self.probability:
+            if secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 type = problem.types[i]
-                value = result.variables[i] + (random.uniform(0.0, 1.0) - 0.5) * self.perturbation
+                value = result.variables[i] + (secrets.SystemRandom().uniform(0.0, 1.0) - 0.5) * self.perturbation
                 result.variables[i] = clip(value, type.min_value, type.max_value)
                 result.evaluated = False
                 
@@ -299,18 +299,18 @@ class NonUniformMutation(Mutation):
     def _delta(self, difference):
         current_iteration = self.algorithm.nfe / self.algorithm.swarm_size
         fraction = min(1.0, current_iteration / float(self.max_iterations))
-        return difference * (1.0 - math.pow(random.uniform(0.0, 1.0), math.pow(1.0 - fraction, self.perturbation)))
+        return difference * (1.0 - math.pow(secrets.SystemRandom().uniform(0.0, 1.0), math.pow(1.0 - fraction, self.perturbation)))
         
     def mutate(self, parent):
         result = copy.deepcopy(parent)
         problem = result.problem
         
         for i in range(problem.nvars):
-            if random.uniform(0.0, 1.0) <= self.probability:
+            if secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 type = problem.types[i]
                 value = result.variables[i]
                 
-                if bool(random.getrandbits(1)):
+                if bool(secrets.SystemRandom().getrandbits(1)):
                     value += self._delta(type.max_value - value)
                 else:
                     value += self._delta(type.min_value - value)
@@ -337,7 +337,7 @@ class UM(Mutation):
         
         for i in range(len(child.variables)):
             if isinstance(problem.types[i], Real):
-                if random.uniform(0.0, 1.0) <= self.probability:
+                if secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                     child.variables[i] = self.um_mutation(float(child.variables[i]),
                                                           problem.types[i].min_value,
                                                           problem.types[i].max_value)
@@ -346,7 +346,7 @@ class UM(Mutation):
         return child
     
     def um_mutation(self, x, lb, ub):
-        return random.uniform(lb, ub)
+        return secrets.SystemRandom().uniform(lb, ub)
     
 class PCX(Variator):
     
@@ -361,7 +361,7 @@ class PCX(Variator):
         result = []
         
         for _ in range(self.noffspring):
-            index = random.randrange(len(parents))
+            index = secrets.SystemRandom().randrange(len(parents))
             parents[index], parents[-1] = parents[-1], parents[index]
             
             result.append(self.pcx(parents))
@@ -397,9 +397,9 @@ class PCX(Variator):
         
         # construct the offspring
         variables = x[k-1]
-        variables = add(variables, multiply(random.gauss(0.0, self.zeta), e_eta[0]))
+        variables = add(variables, multiply(secrets.SystemRandom().gauss(0.0, self.zeta), e_eta[0]))
         
-        eta = random.gauss(0.0, self.eta)
+        eta = secrets.SystemRandom().gauss(0.0, self.eta)
         
         for i in range(1, len(e_eta)):
             variables = add(variables, multiply(eta*D, e_eta[i]))
@@ -471,10 +471,10 @@ class UNDX(Variator):
         variables = g
         
         for i in range(len(e_zeta)):
-            variables = add(variables, multiply(random.gauss(0.0, self.zeta), e_zeta[i]))
+            variables = add(variables, multiply(secrets.SystemRandom().gauss(0.0, self.zeta), e_zeta[i]))
         
         for i in range(1, len(e_eta)):
-            variables = add(variables, multiply(random.gauss(0.0, self.eta / math.sqrt(n)), e_eta[i]))
+            variables = add(variables, multiply(secrets.SystemRandom().gauss(0.0, self.eta / math.sqrt(n)), e_eta[i]))
             
         result = copy.deepcopy(parents[k-1])
         
@@ -517,7 +517,7 @@ class SPX(Variator):
         
         for _ in range(self.noffspring):
             child = copy.deepcopy(parents[n-1])
-            r = [math.pow(random.uniform(0.0, 1.0), 1.0 / (i + 1.0)) for i in range(n-1)]
+            r = [math.pow(secrets.SystemRandom().uniform(0.0, 1.0), 1.0 / (i + 1.0)) for i in range(n-1)]
             C = zeros(n, m)
             
             for i in range(n):
@@ -563,7 +563,7 @@ class BitFlip(Mutation):
             
             if isinstance(type, Binary):
                 for j in range(type.nbits):
-                    if random.uniform(0.0, 1.0) <= probability:
+                    if secrets.SystemRandom().uniform(0.0, 1.0) <= probability:
                         result.variables[i][j] = not result.variables[i][j]
                         result.evaluated = False
                         
@@ -580,12 +580,12 @@ class HUX(Variator):
         result2 = copy.deepcopy(parents[1])
         problem = result1.problem
         
-        if random.uniform(0.0, 1.0) <= self.probability:
+        if secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
             for i in range(problem.nvars):
                 if isinstance(problem.types[i], Binary):
                     for j in range(problem.types[i].nbits):
                         if result1.variables[i][j] != result2.variables[i][j]:
-                            if bool(random.getrandbits(1)):
+                            if bool(secrets.SystemRandom().getrandbits(1)):
                                 result1.variables[i][j] = not result1.variables[i][j]
                                 result2.variables[i][j] = not result2.variables[i][j]
                                 result1.evaluated = False
@@ -604,14 +604,14 @@ class Swap(Mutation):
         problem = result.problem
         
         for index in range(problem.nvars):
-            if isinstance(problem.types[index], Permutation) and random.uniform(0.0, 1.0) <= self.probability:
+            if isinstance(problem.types[index], Permutation) and secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 permutation = result.variables[index]
-                i = random.randrange(len(permutation))
-                j = random.randrange(len(permutation))
+                i = secrets.SystemRandom().randrange(len(permutation))
+                j = secrets.SystemRandom().randrange(len(permutation))
                 
                 if len(permutation) > 1:
                     while i == j:
-                        j = random.randrange(len(permutation))
+                        j = secrets.SystemRandom().randrange(len(permutation))
                 
                 permutation[i], permutation[j] = permutation[j], permutation[i]
                 result.evaluated = False
@@ -630,7 +630,7 @@ class PMX(Variator):
         problem = result1.problem
         
         for index in range(problem.nvars):
-            if isinstance(problem.types[index], Permutation) and random.uniform(0.0, 1.0) <= self.probability:
+            if isinstance(problem.types[index], Permutation) and secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 p1 = result1.variables[index]
                 p2 = result2.variables[index]
                 n = len(p1)
@@ -638,12 +638,12 @@ class PMX(Variator):
                 o2 = [None]*n
                 
                 # select cutting points
-                cp1 = random.randrange(n)
-                cp2 = random.randrange(n)
+                cp1 = secrets.SystemRandom().randrange(n)
+                cp2 = secrets.SystemRandom().randrange(n)
                 
                 if n > 1:
                     while cp1 == cp2:
-                        cp2 = random.randrange(n)
+                        cp2 = secrets.SystemRandom().randrange(n)
                 
                 if cp1 > cp2:
                     cp1, cp2 = cp2, cp1
@@ -691,14 +691,14 @@ class Insertion(Mutation):
         problem = result.problem
         
         for index in range(problem.nvars):
-            if isinstance(problem.types[index], Permutation) and random.uniform(0.0, 1.0) <= self.probability:
+            if isinstance(problem.types[index], Permutation) and secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 permutation = result.variables[index]
-                i = random.randrange(len(permutation))
-                j = random.randrange(len(permutation))
+                i = secrets.SystemRandom().randrange(len(permutation))
+                j = secrets.SystemRandom().randrange(len(permutation))
                 
                 if len(permutation) > 1:
                     while i == j:
-                        j = random.randrange(len(permutation))
+                        j = secrets.SystemRandom().randrange(len(permutation))
                     
                 # remove the i-th element and insert at j-th position
                 temp = permutation[i]
@@ -726,14 +726,14 @@ class Replace(Mutation):
         problem = result.problem
         
         for index in range(problem.nvars):
-            if isinstance(problem.types[index], Subset) and random.uniform(0.0, 1.0) <= self.probability:
+            if isinstance(problem.types[index], Subset) and secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 subset = result.variables[index]
                 
                 if len(subset) < len(problem.types[index].elements):
-                    i = random.randrange(len(subset))
+                    i = secrets.SystemRandom().randrange(len(subset))
 
                     nonmembers = list(set(problem.types[index].elements) - set(subset))
-                    j = random.randrange(len(nonmembers))
+                    j = secrets.SystemRandom().randrange(len(nonmembers))
                     subset[i] = nonmembers[j]
                     result.evaluated = False
                 
@@ -751,12 +751,12 @@ class SSX(Variator):
         problem = result1.problem
         
         for i in range(problem.nvars):
-            if isinstance(problem.types[i], Subset) and random.uniform(0.0, 1.0) <= self.probability:
+            if isinstance(problem.types[i], Subset) and secrets.SystemRandom().uniform(0.0, 1.0) <= self.probability:
                 s1 = set(result1.variables[i])
                 s2 = set(result2.variables[i])
                 
                 for j in range(problem.types[i].size):
-                    if result2.variables[i][j] not in s1 and result1.variables[i][j] not in s2 and random.uniform(0.0, 1.0) < 0.5:
+                    if result2.variables[i][j] not in s1 and result1.variables[i][j] not in s2 and secrets.SystemRandom().uniform(0.0, 1.0) < 0.5:
                         temp = result1.variables[i][j]
                         result1.variables[i][j] = result2.variables[i][j]
                         result2.variables[i][j] = temp
