@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Platypus.  If not, see <http://www.gnu.org/licenses/>.
 import copy
-import random
 import unittest
 from ..core import Constraint, Problem, Solution, ParetoDominance, Archive, \
         nondominated_sort, nondominated_truncate, nondominated_prune, \
         POSITIVE_INFINITY, nondominated_split, truncate_fitness, normalize, \
         EpsilonBoxArchive
+import secrets
 
 def createSolution(*args):
     problem = Problem(0, len(args))
@@ -148,7 +148,7 @@ class TestNondominatedSort(unittest.TestCase):
         self.s5 = createSolution(1.0, 1.0)
         
         self.population = [self.s1, self.s2, self.s3, self.s4, self.s5]
-        random.shuffle(self.population)
+        secrets.SystemRandom().shuffle(self.population)
         
     def test_ranking(self):
         nondominated_sort(self.population)
