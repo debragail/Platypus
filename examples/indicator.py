@@ -1,6 +1,6 @@
-import random
 from platypus import (NSGAII, DTLZ2, Solution, EpsilonBoxArchive, GenerationalDistance, InvertedGenerationalDistance,
                       Hypervolume, EpsilonIndicator, Spacing)
+import secrets
 
 # create the problem
 problem = DTLZ2(3)
@@ -14,7 +14,7 @@ reference_set = EpsilonBoxArchive([0.02, 0.02, 0.02])
 
 for _ in range(1000):
     solution = Solution(problem)
-    solution.variables = [random.uniform(0,1) if i < problem.nobjs-1 else 0.5 for i in range(problem.nvars)]
+    solution.variables = [secrets.SystemRandom().uniform(0,1) if i < problem.nobjs-1 else 0.5 for i in range(problem.nvars)]
     solution.evaluate()
     reference_set.add(solution)
 
